@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: genai-knowledge-service
+  namespace: genai
+  labels:
+    app: genai-knowledge-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: genai-knowledge-service
+  template:
+    metadata:
+      labels:
+        app: genai-knowledge-service
+    spec:
+      containers:
+        - name: rag-api
+          image: genai-knowledge-platform:latest
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              memory: "4Gi"
+              cpu: "2"
+            limits:
+              memory: "8Gi"
+              cpu: "4"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: genai-knowledge-service
+  namespace: genai
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8000
+  selector:
+    app: genai-knowledge-service
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: genai-knowledge-hpa
+  namespace: genai
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: genai-knowledge-service
+  minReplicas: 3
+  maxReplicas: 12
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
