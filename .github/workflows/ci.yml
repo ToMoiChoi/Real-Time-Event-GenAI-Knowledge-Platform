@@ -9,6 +9,7 @@ on:
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -38,6 +39,7 @@ jobs:
   docker-build:
     needs: lint-and-test
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout Code
@@ -48,4 +50,4 @@ jobs:
 
       - name: Build Docker Container
         run: |
-          docker build -t genai-knowledge-platform:latest -f Dockerfile .
+          docker build --progress=plain -t genai-knowledge-platform:latest -f Dockerfile .

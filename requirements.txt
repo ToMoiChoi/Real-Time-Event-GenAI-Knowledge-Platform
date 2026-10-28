@@ -2,7 +2,6 @@
 # Streaming & Data Processing
 kafka-python>=2.0.2
 confluent-kafka>=2.3.0
-apache-flink>=1.18.0; sys_platform != "win32"
 pyiceberg[pyarrow,s3fs]>=0.6.0
 clickhouse-connect>=0.7.0
 psycopg2-binary>=2.9.9
@@ -33,7 +32,6 @@ prometheus-client>=0.20.0
 great-expectations>=0.18.12
 pydantic>=2.6.4
 pydantic-settings>=2.2.1
-apache-airflow>=2.8.2; sys_platform != "win32"
 
 # Utilities & Testing
 fastapi>=0.110.0
